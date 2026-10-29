@@ -1,0 +1,535 @@
+/* =========================================================
+ * 谷歌学术「首页」磨砂玻璃(已清理结果页专属选择器)
+ * 背景图: https://i.111666.best/image/eEMS04jJ47o6RKA6JkQR9t.jpg
+ *
+ * 布局旋钮:
+ *   --feed-gap : 搜索框 → Articles/Case law 的下移距离;
+ *                推荐流紧随其后,底部留 40px。
+ * ========================================================= */
+
+:root {
+  --glass-bg:        rgba(255, 255, 255, 0.18);
+  --glass-bg-hover:  rgba(255, 255, 255, 0.28);
+  --glass-blur:      18px;
+  --glass-saturate:  165%;
+  --glass-border:    rgba(255, 255, 255, 0.45);
+  --glass-border-hv: rgba(255, 255, 255, 0.75);
+  --glass-shadow:    0 8px 32px rgba(31, 41, 55, 0.16);
+  --glass-radius:    16px;
+  --header-z:        999;
+  --dropdown-z:      9999;
+  --stuck-glass-bg:  rgba(255, 255, 255, 0.26);
+  --stuck-blur:      20px;
+  --feed-gap:        150px;   /* ★ 总旋钮: 越大, sdt 与推荐流越往下 */
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #f8f9fa;
+  background-image: url("https://i.111666.best/image/eEMS04jJ47o6RKA6JkQR9t.jpg");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+/* =========================================================
+   全局容器
+   ========================================================= */
+#gs_top {
+  position: relative !important;
+  width: 100% !important;
+  max-width: 820px !important;
+  margin: 0 auto !important;
+  text-align: center !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+#gs_top .gs_act_mnu,
+.gs_act_mnu,
+.gs_act_mnu * {
+  z-index: var(--dropdown-z) !important;
+}
+
+/* =========================================================
+   顶栏(★ 高度三保险,解除原生 63px 限高,含内联 style)
+   ========================================================= */
+#gs_hdr,
+#gs_hdr[style] {
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+}
+
+#gs_hdr {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 12px;
+  width: 100% !important;
+  max-width: 820px !important;
+  margin: 0 auto !important;
+  padding: 12px 16px !important;
+  box-sizing: border-box;
+
+  position: sticky !important;
+  top: 0 !important;
+  z-index: var(--header-z) !important;
+
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-bottom: none !important;
+  isolation: isolate !important;
+
+  transition: background 0.24s ease, backdrop-filter 0.24s ease, box-shadow 0.24s ease;
+}
+
+#gs_hdr.stuck,
+#gs_hdr[style*="position: sticky"][style*="top: 0"] {
+  background: var(--stuck-glass-bg) !important;
+  -webkit-backdrop-filter: blur(var(--stuck-blur)) saturate(140%);
+  backdrop-filter: blur(var(--stuck-blur)) saturate(140%);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+}
+
+#gs_hdr_mnu {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 42px !important;
+  height: 40px !important;
+  flex: 0 0 auto;
+}
+
+#gs_hdr_act {
+  position: relative !important;
+  right: auto !important;
+  top: auto !important;
+  transform: none !important;
+  display: inline-flex !important;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+/* =========================================================
+   首页头部两行(链接行 / 大logo+搜索框)
+   ========================================================= */
+#gs_hdr:has(#gs_hdr_hp_lgow) {
+  flex-wrap: wrap !important;
+  row-gap: 2px;
+  padding: 12px 16px 18px !important;
+}
+#gs_hdr:has(#gs_hdr_hp_lgow) #gs_hdr_md {
+  display: contents !important;
+}
+#gs_hdr:has(#gs_hdr_hp_lgow) #gs_hdr_lgo {
+  display: none !important;   /* 首页已有大logo,隐藏左上小logo */
+}
+#gs_hdr:has(#gs_hdr_hp_lgow) #gs_hdr_mnu { order: 0; }
+#gs_hdr:has(#gs_hdr_hp_lgow) #gs_hdr_hpl {
+  order: 1;
+  flex: 1 1 auto;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+#gs_hdr:has(#gs_hdr_hp_lgow) #gs_hdr_hpl a {
+  color: #1a2b4c !important;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.65);
+  background: transparent !important;
+}
+#gs_hdr:has(#gs_hdr_hp_lgow) #gs_hdr_act { order: 2; }
+#gs_hdr:has(#gs_hdr_hp_lgow) #gs_hdr_srch {
+  order: 5;
+  flex: 1 1 100%;
+  max-width: 720px !important;
+  margin: 4px auto 0 !important;
+  padding: 0 !important;
+}
+
+#gs_hdr_hp_lgow {
+  margin: 10px 0 14px !important;
+  height: auto !important;
+  line-height: 1 !important;
+}
+#gs_hdr_hp_lgo {
+  width: min(381px, 72vw) !important;
+  max-width: 90% !important;
+  filter: drop-shadow(0 4px 14px rgba(255, 255, 255, 0.55));
+}
+
+/* ---------------- 搜索框: 磨砂胶囊 ---------------- */
+#gs_hdr_frm {
+  display: flex !important;
+  align-items: center;
+  gap: 0 !important;
+  width: 100%;
+  max-width: 620px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 3;
+}
+
+#gs_hdr_frm .gs_in_txtw {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  height: 46px;
+  padding: 0 16px;
+  background: rgba(255, 255, 255, 0.42) !important;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.7) !important;
+  border-radius: 999px 0 0 999px !important;
+  box-shadow: 0 2px 10px rgba(31, 41, 55, 0.10);
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+#gs_hdr_frm .gs_in_txtw:focus-within {
+  background: rgba(255, 255, 255, 0.75) !important;
+  border-color: #4285f4 !important;
+  box-shadow: 0 2px 14px rgba(66, 133, 244, 0.30);
+}
+
+#gs_hdr_tsi {
+  flex: 1;
+  width: 100% !important;
+  height: 100%;
+  padding: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  outline: none !important;
+  font-size: 16px;
+  color: #202124;
+  box-sizing: border-box;
+}
+
+#gs_hdr_tsi::placeholder {
+  color: #80868b;
+}
+
+#gs_hdr_tsb {
+  flex: 0 0 auto;
+  width: 72px !important;
+  height: 48px !important;
+  margin: 0 !important;
+  border: none !important;
+  border-radius: 0 12px 12px 0 !important;
+  background: #4285f4 !important;
+  color: #fff !important;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(66, 133, 244, 0.35);
+  transition: background 0.2s, box-shadow 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#gs_hdr_tsb:hover {
+  background: #3367d6 !important;
+  box-shadow: 0 4px 12px rgba(66, 133, 244, 0.45);
+}
+
+#gs_hdr_tsb span {
+  display: none !important;
+}
+
+#gs_hdr_tsb::after {
+  content: "🔍";
+}
+
+#gs_hdr_tsc {
+  flex: 0 0 auto;
+  display: inline-flex !important;
+  align-items: center;
+}
+
+/* ---------------- 搜索自动完成下拉: 磨砂 ---------------- */
+#gs_hdr_frm_ac > div,
+.gs_md_ac > div {
+  background: rgba(255, 255, 255, 0.72) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  backdrop-filter: blur(20px) saturate(170%);
+  border: 1px solid rgba(255, 255, 255, 0.75) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 12px 32px rgba(31, 41, 55, 0.18) !important;
+  overflow: hidden;
+}
+.gs_md_ac ul,
+.gs_md_ac li {
+  background: transparent !important;
+  border: none !important;
+}
+.gs_md_ac li:hover,
+.gs_md_ac .gs_md_acs {
+  background: rgba(255, 255, 255, 0.55) !important;
+}
+
+/* =========================================================
+   ★ Articles/Case law(#gs_hp_sdt): 磨砂分段控件
+   ========================================================= */
+#gs_hp_sdt {
+  flex: 0 0 auto;
+  width: fit-content;
+  max-width: 92%;
+  margin: var(--feed-gap) auto 0 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 8px;
+  box-sizing: border-box;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.28);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  backdrop-filter: blur(14px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-radius: 999px;
+  box-shadow:
+    0 4px 18px rgba(31, 41, 55, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+#gs_hp_sdt .gs_in_ra,
+#gs_hp_sdt .gs_in_cb {
+  display: inline-flex !important;
+  align-items: center !important;
+  margin: 0 !important;
+  background: transparent !important;
+}
+
+#gs_hp_sdt .gs_in_ra label,
+#gs_hp_sdt .gs_in_cb label {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 8px 20px !important;
+  border-radius: 999px !important;
+  border: 1px solid transparent !important;
+  font-size: 14px !important;
+  color: #1a2b4c !important;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#gs_hp_sdt .gs_in_ra label:hover,
+#gs_hp_sdt .gs_in_cb label:hover {
+  background: rgba(255, 255, 255, 0.45) !important;
+}
+
+#gs_hp_sdt .gs_in_ra input:checked + label,
+#gs_hp_sdt .gs_in_cb input:checked + label {
+  background: rgba(255, 255, 255, 0.88) !important;
+  border-color: rgba(255, 255, 255, 0.9) !important;
+  color: #16305c !important;
+  font-weight: 600;
+  text-shadow: none;
+  box-shadow:
+    0 2px 8px rgba(31, 41, 55, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+#gs_hp_sdt .gs_chk,
+#gs_hp_sdt .gs_cbx {
+  display: none !important;
+}
+
+/* =========================================================
+   首页主体: 块级流
+   ========================================================= */
+#gs_bdy,
+#gs_bdy_ccl,
+#gs_hp_main {
+  display: block !important;
+  width: 100% !important;
+  background: transparent !important;
+}
+#gs_bdy_sb { display: none !important; }   /* 首页侧栏原生为空,保持隐藏 */
+
+#gs_hp_main {
+  margin: 0 auto !important;
+  padding: 0 8px 48px !important;
+  box-sizing: border-box;
+}
+
+/* 推荐流容器: 居中 + 底部留白 */
+#gs_hp_ra {
+  width: 100% !important;
+  max-width: 800px !important;
+  margin: 0 auto 40px !important;
+  text-align: left !important;
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  background: transparent !important;
+}
+
+#gs_ra_b,
+#gs_ra_bd {
+  position: relative !important;
+  inset: auto !important;
+  width: 100% !important;
+  max-height: none !important;
+  overflow: visible !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* 推荐流内除卡片外一切背景透明(修白条分隔行) */
+#gs_hp_ra *:not(.gs_ora):not(.gs_ora *) {
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+/* 标题行与分隔行文字 */
+#gs_hp_ra > div:first-child:not(#gs_ra_b):not(.gs_ora),
+#gs_ra_b > *:not(.gs_ora):not(#gs_ra_bd),
+#gs_ra_bd > *:not(.gs_ora) {
+  border: none !important;
+  color: #16305c !important;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+}
+#gs_ra_b > *:not(.gs_ora):not(#gs_ra_bd):not(:first-child),
+#gs_ra_bd > *:not(.gs_ora) {
+  text-align: center;
+  padding: 2px 0 !important;
+}
+
+/* ---- 推荐卡片 → 磨砂玻璃 ---- */
+.gs_ora {
+  width: 100% !important;
+  margin: 0 auto 14px !important;
+  padding: 16px 22px !important;
+  position: relative !important;
+  box-sizing: border-box;
+
+  background: var(--glass-bg) !important;
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--glass-radius) !important;
+  box-shadow:
+    var(--glass-shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+
+  transform: scale(1);
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    background 0.22s ease,
+    border-color 0.22s ease;
+}
+.gs_ora:hover {
+  transform: scale(1.012);
+  background: var(--glass-bg-hover) !important;
+  border-color: var(--glass-border-hv) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+  box-shadow:
+    0 14px 40px rgba(31, 41, 55, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  z-index: 2;
+}
+
+/* 卡片内部白底清除(保留插件徽章内联色) */
+.gs_ora .gs_orab,
+.gs_ora .gs_orab_m,
+.gs_ora .gs_ri,
+.gs_ora .gs_a,
+.gs_ora .gs_gsh,
+.gs_orab_mask,
+#gs_ora_msk {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* 卡片文字可读性 */
+.gs_ora,
+.gs_ora .gs_a,
+.gs_ora .gs_ri {
+  color: #1f2937;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.55);
+}
+.gs_ora h3,
+.gs_ora h3 a,
+.gs_ora .gs_orab_t a {
+  color: #16305c !important;
+}
+
+/* 座右铭: 磨砂小衬底 */
+#gs_hp_giants,
+#gs_hp_eng {
+  display: inline-block;
+  margin: 6px 16px 20px !important;
+  padding: 6px 18px !important;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.20);
+  -webkit-backdrop-filter: blur(10px) saturate(150%);
+  backdrop-filter: blur(10px) saturate(150%);
+  color: #1a2b4c !important;
+  font-style: italic;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+/* =========================================================
+   页脚
+   ========================================================= */
+#gs_ftr,
+#gs_ftr *,
+#gs_ftr td,
+#gs_ftr a,
+#gs_ftr button,
+#gs_ftr_rt,
+#gs_ftr_mnu {
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  border-top: none !important;
+  text-shadow: none !important;
+}
+
+#gs_ftr {
+  padding: 10px 0 !important;
+}
+
+/* =========================================================
+   响应式 / 降级
+   ========================================================= */
+@media (max-width: 720px) {
+  :root { --feed-gap: 36px; }
+  #gs_hdr { padding: 10px 12px 14px !important; }
+  #gs_hdr_frm .gs_in_txtw { height: 42px; }
+  #gs_hdr_tsb { height: 44px !important; width: 60px !important; }
+  #gs_hp_main { padding: 0 6px 32px !important; }
+  #gs_hp_sdt { padding: 0 4px; gap: 2px; }
+  #gs_hp_sdt .gs_in_ra label,
+  #gs_hp_sdt .gs_in_cb label { padding: 6px 14px !important; font-size: 13px !important; }
+  .gs_ora { padding: 14px 16px !important; }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .gs_ora,
+  #gs_hp_sdt,
+  #gs_hdr_frm .gs_in_txtw,
+  #gs_hdr_frm_ac > div {
+    background: rgba(255, 255, 255, 0.82) !important;
+  }
+}
