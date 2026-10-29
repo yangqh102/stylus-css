@@ -4,23 +4,25 @@
  * 注意: 该图有防盗链,仅在网页内以 background-image 引用时(浏览器带 Referer)才显示;
  *       直接打开/直链下载会返回 403 占位图。
  *
- * 磨砂实现要点:
- *   1. 半透明白底 + backdrop-filter: blur() saturate(),必须带 -webkit- 前缀
- *   2. 卡片的所有祖先背景必须是 transparent,否则模糊采样不到背景图
- *   3. 卡片不能加 overflow:hidden,否则"引用"弹窗会被裁掉
- *   4. @supports 做降级:不支持 backdrop-filter 时退回较实的半透明底
+ * 更新改动：
+ * ✅ 顶部header sticky吸顶，滚动常驻顶部
+ * ✅ 头像与搜索框水平居中对齐
+ * ✅ 头像下拉菜单提升z-index，防止被卡片/筛选栏盖住
+ * ✅ 【修复】彻底清除header内部table单元格原生白底色，修复sticky下backdrop-filter渲染bug
  */
 
 /* ===== 可调参数(改这几个值即可整体调风格) ===== */
 :root {
   --glass-bg:        rgba(255, 255, 255, 0.18);  /* 磨砂底浓度,越大越"白"越易读 */
   --glass-bg-hover:  rgba(255, 255, 255, 0.28);
-  --glass-blur:      18px;                        /* 模糊半径,越大越朦胧 */
-  --glass-saturate:  165%;                        /* 背景饱和度增强 */
+  --glass-blur:      18px;                       /* 模糊半径,越大越朦胧 */
+  --glass-saturate:  165%;                       /* 背景饱和度增强 */
   --glass-border:    rgba(255, 255, 255, 0.45);
   --glass-border-hv: rgba(255, 255, 255, 0.75);
   --glass-shadow:    0 8px 32px rgba(31, 41, 55, 0.16);
   --glass-radius:    16px;
+  --header-z:        99;                         /* 吸顶栏层级 */
+  --dropdown-z:      999;                        /* 头像下拉菜单最高层级 */
 }
 
 html,
@@ -44,11 +46,11 @@ body {
    搜索结果: 磨砂卡片 / 水平居中
    ========================================================= */
 .gs_r.gs_or {
-  max-width: 800px !important;              /* 限宽,便于居中 */
-  width: 100% !important;                   /* 撑满中栏(上限880px),保证卡片宽度一致 */
-  margin: 0 auto 18px !important;           /* 水平居中 + 卡片间距 */
+  max-width: 800px !important;                  /* 限宽,便于居中 */
+  width: 100% !important;                       /* 撑满中栏(上限800px),保证卡片宽度一致 */
+  margin: 0 auto 18px !important;               /* 水平居中 + 卡片间距 */
   padding: 16px 22px !important;
-  position: relative !important;            /* 保证 hover 的 z-index 生效 */
+  position: relative !important;                /* 保证 hover 的 z-index 生效 */
 
   /* ---- 磨砂核心 ---- */
   background: var(--glass-bg) !important;
@@ -116,9 +118,9 @@ body {
 /* ✅ 筛选栏 fixed 悬浮磨砂卡片,紧贴居中卡片左侧 */
 #gs_bdy_sb_in {
   position: fixed !important;
-  left: calc(50% - 440px - 180px - 4px) !important;
-  top: 140px !important;
-  width: 180px !important;
+  left: calc(50% - 400px - 180px - 4px) !important;
+  top: 142px !important;
+  width: 250px !important;
   max-height: calc(100vh - 140px);
   overflow-y: auto;
   overflow-x: hidden;
@@ -215,17 +217,35 @@ body {
 }
 
 /* =========================================================
-   顶部: 汉堡菜单 + Google学术logo + 搜索框 整组水平居中
+   ✅ 顶部: sticky 吸顶悬浮！滚动时固定在顶部
+   👉 修复：isolation: isolate 解决sticky渲染bug，强制清空内部table单元格底色
    ========================================================= */
 #gs_hdr {
   display: flex !important;
-  align-items: center;
+  align-items: center !important;
   justify-content: center;
   gap: 14px;
   width: 90% !important;
   margin: 0 auto !important;
   padding: 14px 8px !important;
-  position: relative !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: var(--header-z) !important;
+  background: transparent !important;
+  -webkit-backdrop-filter: blur(0px) saturate(100%);
+  backdrop-filter: blur(1px) saturate(100%);
+  border-bottom: none !important;
+  isolation: isolate !important; /* 关键修复：修复sticky下backdrop-filter渲染异常 */
+}
+
+/* 🔥 重点：清除header内部所有表格行、单元格原生白色底色！之前就是这里残留底色！ */
+#gs_hdr table,
+#gs_hdr tr,
+#gs_hdr td,
+#gs_hdr th,
+#gs_hdr tbody {
+  background: transparent !important;
+  background-color: transparent !important;
 }
 
 /* 汉堡菜单按钮: 固定小尺寸,不占用表格单元格的宽度 */
@@ -254,14 +274,22 @@ body {
   margin: 0 !important;
 }
 
-/* 头像钉在右上角,不挤占居中的空间 */
+/* ✅ 头像：和搜索框垂直居中对齐 */
 #gs_hdr_act {
   position: absolute !important;
   right: 8px !important;
   top: 50%;
   transform: translateY(-50%);
-  display: inline-block !important;
+  display: inline-flex !important;
+  align-items: center;
   flex: 0 0 auto;
+}
+
+/* ✅ 头像下拉菜单，提升层级，不会被卡片/筛选栏盖住 */
+#gs_hdr_act .gs_act_mnu,
+.gs_act_mnu,
+.gs_act_mnu * {
+  z-index: var(--dropdown-z) !important;
 }
 
 /* ---------------- 搜索框美化(同风格磨砂胶囊) ---------------- */
@@ -347,7 +375,6 @@ body {
       否则会把上面/下面的磨砂底刷成透明
    ========================================================= */
 #gs_top,
-#gs_hdr,
 #gs_top_bar,
 #gs_hdr2,
 .gs_hdr2,
@@ -362,12 +389,6 @@ body {
   background: transparent !important;
   box-shadow: none !important;
   text-shadow: none !important;
-}
-
-/* 顶部 logo / 搜索框所在的横向白条,一并去掉 */
-#gs_hdr td,
-#gs_hdr th {
-  background: transparent !important;
 }
 
 /* 二级工具条(文章/专利/书籍 + 我的个人学术档案 等) */
@@ -432,6 +453,7 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.7) !important;
   border-radius: var(--glass-radius) !important;
   box-shadow: 0 16px 48px rgba(31, 41, 55, 0.24) !important;
+  z-index: 80 !important;
 }
 
 /* 弹窗内部子块保持透明,避免叠出白块 */
@@ -483,17 +505,3 @@ body {
 #gs_ftr {
   padding: 10px 0 !important;
 }
-
-/* =========================================================
-   可选: 顶部页头也做成磨砂通栏(需要时取消注释)
-   ========================================================= */
-/*
-#gs_hdr {
-  background: rgba(255, 255, 255, 0.14) !important;
-  -webkit-backdrop-filter: blur(16px) saturate(160%);
-  backdrop-filter: blur(16px) saturate(160%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.35) !important;
-  border-radius: 0 0 18px 18px;
-  width: 100% !important;
-}
-*/
