@@ -1,5 +1,5 @@
 /*
- * 谷歌学术页面样式
+ * 谷歌学术页面样式 - 磨砂玻璃版
  * 背景图: https://i.111666.best/image/eEMS04jJ47o6RKA6JkQR9t.jpg
  * 注意: 该图有防盗链,仅在网页内以 background-image 引用时(浏览器带 Referer)才显示;
  *       直接打开/直链下载会返回 403 占位图。
@@ -23,7 +23,7 @@ body {
 }
 
 /* =========================================================
-   搜索结果: 卡片化 / 水平居中 / 仅边框、无背景
+   搜索结果: 卡片化 / 水平居中 / 磨砂玻璃卡片
    ========================================================= */
 .gs_r.gs_or {
   max-width: 880px !important;              /* 限宽,便于居中 */
@@ -31,11 +31,13 @@ body {
   margin: 0 auto 18px !important;           /* 水平居中 + 卡片间距 */
   padding: 16px 22px !important;
 
-  /* 完全透明底,只保留外框线 */
-  background: transparent !important;
+  /* ✅ 磨砂玻璃效果 */
+  background: rgba(255, 255, 255, 0.25) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
 
   /* 外框线 */
-  border: 1px solid rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
   border-radius: 12px;
   box-shadow: none;
   transform: scale(1);
@@ -45,7 +47,8 @@ body {
 /* 鼠标移到卡片上: 放大 + 轻阴影,增强"卡片"感 */
 .gs_r.gs_or:hover {
   transform: scale(1.015);
-  border-color: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(255, 255, 255, 0.85) !important;
+  background: rgba(255, 255, 255, 0.35) !important;
   box-shadow: 0 8px 24px rgba(31, 41, 55, 0.15);
   z-index: 2;
 }
@@ -68,7 +71,7 @@ body {
   margin-right: 0 !important;
 }
 
-/* ✅ 筛选栏 fixed 悬浮，紧贴居中卡片左侧，top调整为120px和第一条结果顶部对齐 */
+/* ✅ 筛选栏 fixed 悬浮，紧贴居中卡片左侧，磨砂玻璃 */
 #gs_bdy_sb_in {
   position: fixed !important;
   left: calc(50% - 440px - 180px - 4px) !important;
@@ -83,17 +86,22 @@ body {
   text-align: left;
   z-index: 5;
 
-  background: transparent !important;
-  border: 1px solid rgba(255, 255, 255, 0.8) !important;
+  /* ✅ 磨砂玻璃效果 */
+  background: rgba(255, 255, 255, 0.25) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
   border-radius: 12px;
   padding: 14px 16px !important;
   transform: scale(1);
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
 }
 
 #gs_bdy_sb_in:hover {
   transform: scale(1.015);
-  border-color: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(255, 255, 255, 0.85) !important;
+  background: rgba(255, 255, 255, 0.35) !important;
   box-shadow: 0 8px 24px rgba(31, 41, 55, 0.15);
   z-index: 6;
 }
@@ -272,7 +280,7 @@ body {
 }
 
 /* =========================================================
-   全站透明: 页头 / 二级工具条 / 左侧筛选栏 / 结果区 / 页脚
+   全站透明: 页头 / 二级工具条 / 结果区 / 页脚
    只去掉背景与阴影,文字颜色保留原样保证可读性
    ========================================================= */
 #gs_top,
@@ -283,7 +291,6 @@ body {
 #gs_res,
 #gs_res_ccl,
 #gs_res_ccl_top,
-#gs_bdy_sb_in,
 #gs_res_ccl_mid,
 #gs_res_ccl_mid div.gs_md_cont,
 #gs_res_ccl_bot,
@@ -344,7 +351,6 @@ body {
 /* 左侧筛选栏文字 */
 #gs_bdy_sb_in,
 #gs_bdy_sb_in a {
-  background: transparent !important;
   color: #1a2b4c !important;
 }
 
