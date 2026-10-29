@@ -1,0 +1,23 @@
+/*
+ * 谷歌学术页面样式
+ * 背景图: https://i.111666.best/image/eEMS04jJ47o6RKA6JkQR9t.jpg
+ * 注意: 该图有防盗链,仅在网页内以 background-image 引用时(浏览器带 Referer)才显示;
+ *       直接打开/直链下载会返回 403 占位图。
+ */
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+
+  /* 图片加载失败(防盗链未放行 / 断网)时的兜底色 */
+  background-color: #f8f9fa;
+  background-image: url("https://i.111666.best/image/eEMS04jJ47o6RKA6JkQR9t.jpg");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
