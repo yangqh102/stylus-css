@@ -21,3 +21,103 @@ body {
   background-repeat: no-repeat;
   background-attachment: fixed;
 }
+
+/* =========================================================
+   搜索结果: 卡片化 / 水平居中 / 毛玻璃透明 / 外框线
+   直接作用于每条搜索结果 .gs_r.gs_or,不依赖父容器 ID
+   ========================================================= */
+.gs_r.gs_or {
+  max-width: 880px !important;              /* 限宽,便于居中 */
+  margin: 0 auto 18px !important;           /* 水平居中 + 卡片间距 */
+  padding: 16px 22px !important;
+
+  /* 透明底 + 毛玻璃,让背景图透出来 */
+  background: rgba(255, 255, 255, 0.55) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(150%) !important;
+  backdrop-filter: blur(10px) saturate(150%) !important;
+
+  /* 外框线 */
+  border: 1px solid rgba(255, 255, 255, 0.8) !important;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(31, 41, 55, 0.10);
+}
+
+/* 鼠标移到卡片上: 略微提亮,增强"卡片"感(不需要可删) */
+.gs_r.gs_or:hover {
+  background: rgba(255, 255, 255, 0.72);
+  border-color: rgba(255, 255, 255, 0.95);
+}
+
+/* =========================================================
+   顶部: logo + 搜索框 整条水平居中
+   谷歌学术页头是 <table> 布局,直接把表格及单元格块级化并居中
+   ========================================================= */
+#gs_hdr table#gs_hdr_t,
+#gs_hdr_t {
+  display: block !important;
+  width: 100% !important;
+  margin: 0 auto;
+  padding: 0;
+  border-collapse: separate;
+}
+#gs_hdr_t tr {
+  display: block !important;
+  text-align: center;
+}
+#gs_hdr_t td {
+  display: inline-block !important;
+  vertical-align: middle;
+  text-align: center;
+}
+
+/* =========================================================
+   全站透明: 页头 / 二级工具条 / 左侧筛选栏 / 结果区 / 页脚
+   只去掉背景与阴影,文字颜色保留原样保证可读性
+   ========================================================= */
+#gs_top,
+#gs_hdr,
+#gs_hdr2,
+.gs_hdr2,
+#gs_res,
+#gs_res_ccl,
+#gs_res_ccl_l,
+#gs_res_ccl_mid,
+#gs_res_ccl_mid div.gs_md_cont,
+#gs_fl,
+#gs_ft,
+#gs_foot {
+  background: transparent !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+/* 顶部 logo / 搜索框所在的横向白条,一并去掉 */
+#gs_hdr td,
+#gs_hdr th {
+  background: transparent !important;
+}
+
+/* 二级工具条(文章/专利/书籍 + 我的个人学术档案 等) */
+#gs_hdr2,
+#gs_hdr2 td,
+#gs_hdr2 a,
+.gs_hdr2,
+#gs_top_bar {
+  background: transparent !important;
+  border-color: transparent !important;
+}
+
+/* 左侧筛选栏(时间不限/按相关性排序 等) */
+#gs_res_ccl_l,
+#gs_res_ccl_l a {
+  background: transparent !important;
+  color: #1a2b4c !important;
+}
+
+/* 页脚 */
+#gs_ft,
+#gs_foot,
+#gs_ft td {
+  background: transparent !important;
+  color: #444;
+}
