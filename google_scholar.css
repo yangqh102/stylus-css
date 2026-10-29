@@ -23,51 +23,252 @@ body {
 }
 
 /* =========================================================
-   搜索结果: 卡片化 / 水平居中 / 毛玻璃透明 / 外框线
-   直接作用于每条搜索结果 .gs_r.gs_or,不依赖父容器 ID
+   搜索结果: 卡片化 / 水平居中 / 仅边框、无背景
    ========================================================= */
 .gs_r.gs_or {
   max-width: 880px !important;              /* 限宽,便于居中 */
+  width: 100% !important;                  /* 撑满中栏(上限880px),保证卡片宽度一致 */
   margin: 0 auto 18px !important;           /* 水平居中 + 卡片间距 */
   padding: 16px 22px !important;
 
-  /* 透明底 + 毛玻璃,让背景图透出来 */
-  background: rgba(255, 255, 255, 0.55) !important;
-  -webkit-backdrop-filter: blur(10px) saturate(150%) !important;
-  backdrop-filter: blur(10px) saturate(150%) !important;
+  /* 完全透明底,只保留外框线 */
+  background: transparent !important;
 
   /* 外框线 */
   border: 1px solid rgba(255, 255, 255, 0.8) !important;
   border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(31, 41, 55, 0.10);
+  box-shadow: none;
+  transform: scale(1);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
-/* 鼠标移到卡片上: 略微提亮,增强"卡片"感(不需要可删) */
+/* 鼠标移到卡片上: 放大 + 轻阴影,增强"卡片"感 */
 .gs_r.gs_or:hover {
-  background: rgba(255, 255, 255, 0.72);
-  border-color: rgba(255, 255, 255, 0.95);
+  transform: scale(1.015);
+  border-color: rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 0 8px 24px rgba(31, 41, 55, 0.15);
+  z-index: 2;
 }
 
 /* =========================================================
-   顶部: logo + 搜索框 整条水平居中
-   谷歌学术页头是 <table> 布局,直接把表格及单元格块级化并居中
+   结果区整体
    ========================================================= */
-#gs_hdr table#gs_hdr_t,
-#gs_hdr_t {
-  display: block !important;
+#gs_res {
   width: 100% !important;
-  margin: 0 auto;
-  padding: 0;
-  border-collapse: separate;
+  margin: 0 !important;
+  padding: 0 8px !important;
 }
-#gs_hdr_t tr {
+
+#gs_res_ccl {
   display: block !important;
-  text-align: center;
+  position: relative !important;
+  width: 100% !important;
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
 }
-#gs_hdr_t td {
+
+/* ✅ 筛选栏 fixed 悬浮，紧贴居中卡片左侧，top调整为120px和第一条结果顶部对齐 */
+#gs_bdy_sb_in {
+  position: fixed !important;
+  left: calc(50% - 440px - 180px - 4px) !important;
+  top: 140px !important;
+  width: 180px !important;
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  float: none !important;
+  margin: 0 !important;
+  box-sizing: border-box;
+  text-align: left;
+  z-index: 5;
+
+  background: transparent !important;
+  border: 1px solid rgba(255, 255, 255, 0.8) !important;
+  border-radius: 12px;
+  padding: 14px 16px !important;
+  transform: scale(1);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+#gs_bdy_sb_in:hover {
+  transform: scale(1.015);
+  border-color: rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 0 8px 24px rgba(31, 41, 55, 0.15);
+  z-index: 6;
+}
+
+/* 清除筛选栏原生自带间距 */
+#gs_bdy_sb_in .gs_bdy_sb_sec {
+  margin: 0 0 12px 0 !important;
+  padding:0 !important;
+}
+#gs_bdy_sb_in ul {
+  padding-left: 16px !important;
+  margin:0 !important;
+}
+#gs_bdy_sb_in li {
+  padding: 3px 0 !important;
+}
+
+/* 窄屏降级，取消悬浮，恢复正常文档流 */
+@media (max-width: 1300px) {
+  #gs_bdy_sb_in {
+    position: static !important;
+    width: auto !important;
+    margin-bottom: 16px !important;
+    left: auto !important;
+    top: auto !important;
+    max-height: unset;
+    overflow: visible;
+  }
+}
+
+/* 中间结果栏: 拉满整行 + flex 纵向布局,子元素全部居中 */
+#gs_res_ccl_mid {
+  float: none !important;
+  clear: both !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding-left: 0 !important;
+}
+
+/* 底部区(快讯条 + 翻页条 #gs_n / #gs_nm): 同样整行 + 内容居中 */
+#gs_res_ccl_bot {
+  width: 100% !important;
+  margin: 0 auto !important;
+  text-align: center !important;
+}
+#gs_res_ccl_bot #gs_n,
+#gs_res_ccl_bot #gs_nm {
+  display: block !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* =========================================================
+   顶部: 汉堡菜单 + Google学术logo + 搜索框 整组水平居中
+   ========================================================= */
+#gs_hdr {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  width: 90% !important;
+  margin: 0 auto !important;
+  padding: 14px 8px !important;
+  position: relative !important;
+}
+
+/* 汉堡菜单按钮: 固定小尺寸,不占用表格单元格的宽度 */
+#gs_hdr_mnu {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 44px !important;
+  height: 40px !important;
+  flex: 0 0 auto;
+}
+
+/* Google 学术 logo: 保持官网自带尺寸,只确保参与 flex 居中 */
+#gs_hdr_lgo {
   display: inline-block !important;
-  vertical-align: middle;
-  text-align: center;
+  flex: 0 0 auto;
+  margin-right: 4px;
+}
+
+/* 搜索框容器: 固定宽度,避免被官网样式撑宽,保证三个内容整体居中 */
+#gs_hdr_md {
+  display: block !important;
+  flex: 0 0 480px;
+  width: 480px !important;
+  max-width: 480px !important;
+  margin: 0 !important;
+}
+
+/* 头像钉在右上角,不挤占居中的空间 */
+#gs_hdr_act {
+  position: absolute !important;
+  right: 8px !important;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-block !important;
+  flex: 0 0 auto;
+}
+
+/* ---------------- 搜索框美化 ---------------- */
+#gs_hdr_frm {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+/* 输入框外壳(胶囊形,内部含自动完成下拉,不要裁剪) */
+#gs_hdr_frm .gs_in_txtw {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  height: 44px;
+  padding: 0 14px 0 18px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  border-radius: 22px;
+  box-shadow: 0 2px 8px rgba(31, 41, 55, 0.08);
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+#gs_hdr_frm .gs_in_txtw:focus-within {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: #4285f4;
+  box-shadow: 0 2px 12px rgba(66, 133, 244, 0.25);
+}
+
+#gs_hdr_tsi {
+  flex: 1;
+  width: 100% !important;
+  height: 100%;
+  padding: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  outline: none !important;
+  font-size: 15px;
+  color: #202124;
+  box-sizing: border-box;
+}
+#gs_hdr_tsi::placeholder {
+  color: #80868b;
+}
+
+/* 搜索按钮: 蓝色胶囊 */
+#gs_hdr_tsb {
+  flex: 0 0 auto;
+  width: 84px;
+  height: 44px;
+  margin: 0 !important;
+  border: none !important;
+  border-radius: 22px;
+  background: #4285f4 !important;
+  color: #fff !important;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(66, 133, 244, 0.35);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+#gs_hdr_tsb:hover {
+  background: #3367d6 !important;
+  box-shadow: 0 4px 12px rgba(66, 133, 244, 0.45);
+}
+
+/* 右侧的小图标(清除X等): 只保证不破坏布局 */
+#gs_hdr_tsc {
+  flex: 0 0 auto;
+  display: inline-flex !important;
+  align-items: center;
 }
 
 /* =========================================================
@@ -76,13 +277,16 @@ body {
    ========================================================= */
 #gs_top,
 #gs_hdr,
+#gs_top_bar,
 #gs_hdr2,
 .gs_hdr2,
 #gs_res,
 #gs_res_ccl,
-#gs_res_ccl_l,
+#gs_res_ccl_top,
+#gs_bdy_sb_in,
 #gs_res_ccl_mid,
 #gs_res_ccl_mid div.gs_md_cont,
+#gs_res_ccl_bot,
 #gs_fl,
 #gs_ft,
 #gs_foot {
@@ -107,9 +311,39 @@ body {
   border-color: transparent !important;
 }
 
-/* 左侧筛选栏(时间不限/按相关性排序 等) */
-#gs_res_ccl_l,
-#gs_res_ccl_l a {
+/* "文章 / 找到约14,500条结果 / 我的个人学术档案" 这一整行: 连同内部子元素一起透明 */
+#gs_ab,
+#gs_ab *,
+#gs_res_ccl_top,
+#gs_res_ccl_top * {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* 工具条整行的横线(上/下边框)去掉 */
+#gs_ab,
+#gs_res_ccl_top,
+#gs_ab td,
+#gs_res_ccl_top td {
+  border-top: none !important;
+  border-bottom: none !important;
+}
+
+/* 顶部横线可能来自上方页头的下边框或行内任意子元素,全部清掉 */
+#gs_hdr,
+#gs_hdr *,
+#gs_ab,
+#gs_ab *,
+#gs_res_ccl_top,
+#gs_res_ccl_top * {
+  border-top: none !important;
+  border-bottom: none !important;
+  outline: none !important;
+}
+
+/* 左侧筛选栏文字 */
+#gs_bdy_sb_in,
+#gs_bdy_sb_in a {
   background: transparent !important;
   color: #1a2b4c !important;
 }
@@ -120,4 +354,32 @@ body {
 #gs_ft td {
   background: transparent !important;
   color: #444;
+}
+
+/* "下一页"按钮: 背景透明 */
+.gs_btnPR,
+.gs_btnPR span,
+.gs_btnPR .gs_wr,
+.gs_btnPR .gs_ico {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* 底部页脚(隐私权/条款/帮助): 背景透明,去掉顶部边框与内边距带来的白条 */
+#gs_ftr,
+#gs_ftr *,
+#gs_ftr td,
+#gs_ftr a,
+#gs_ftr button,
+#gs_ftr_rt,
+#gs_ftr_mnu {
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  border-top: none !important;
+  text-shadow: none !important;
+}
+
+#gs_ftr {
+  padding: 10px 0 !important;
 }
