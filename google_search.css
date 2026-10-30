@@ -1,0 +1,636 @@
+/*
+ * Google Search · 磨砂双列主题(完整最终版 v4)
+ * 适用: https://www.google.com.hk/* 等谷歌搜索页 · Stylus 纯CSS
+ * 背景图: https://i.111666.best/image/eEMS04jJ47o6RKA6JkQR9t.jpg
+ *
+ * v4 修复:
+ *  ⑦ logo 与搜索框同一行、整组居中(logo 解除绝对定位 + 公共父层 flex)
+ *  ⑧ 翻页恢复原生两行: 第一行 Goooooogle 标志 / 第二行数字…Next 收尾,整体居中
+ *  ⑨ 页脚(隐私/条款/国家等)居中
+ *
+ * 旋钮:
+ *  --top-bar-w  : 顶栏与导航条限宽   --card-gap-x/y : 卡片列/行间距
+ */
+
+/* ========== 可调参数 ========== */
+:root {
+  --glass-bg:        rgba(255, 255, 255, 0.18);
+  --glass-bg-hover:  rgba(255, 255, 255, 0.28);
+  --glass-blur:      18px;
+  --glass-saturate:  165%;
+  --glass-border:    rgba(255, 255, 255, 0.45);
+  --glass-border-hv: rgba(255, 255, 255, 0.75);
+  --glass-shadow:    0 8px 32px rgba(31, 41, 55, 0.16);
+  --glass-radius:    16px;
+  --card-gap-x:      32px;
+  --card-gap-y:      36px;
+  --top-bar-w:       880px;
+}
+
+/* ========== 1. 全屏背景 ========== */
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #f8f9fa;
+  background-image: url("https://i.111666.best/image/eEMS04jJ47o6RKA6JkQR9t.jpg");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+/* ========== 2. 顶部区域透明清理 ========== */
+#headnav,
+#headnav *,
+#gb,
+#gb *,
+header[role="banner"],
+header[role="banner"] * {
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* 原生白色背景条隐藏 */
+.sfbg,
+.sfbgx {
+  display: none !important;
+}
+
+/* ========== 2.5 ★ 顶栏: logo + 搜索框 同一行、整组居中 ========== */
+/* 1) logo 解除绝对定位,回到文档流 */
+#logo,
+a#logo,
+#tsf a:has(> img) {
+  position: static !important;
+  display: inline-flex !important;
+  align-items: center;
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+#logo img,
+a#logo img,
+#tsf a:has(> img) img {
+  height: 34px !important;
+  width: auto !important;
+  max-width: 130px;
+}
+
+/* 2) 搜索表单: 吃掉剩余宽度但设上限 */
+#searchform {
+  margin: 0 !important;
+  flex: 0 1 660px !important;
+  max-width: 660px;
+  min-width: 0;
+}
+form#tsf {
+  display: flex !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+}
+#tsf-c {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* 3) logo 与搜索框的公共父层 → 居中横排(多版本兜底) */
+:is(body, div):has(> #logo):has(> #searchform),
+:is(body, div):has(> a#logo):has(> #searchform),
+:is(body, div):has(> * > #logo):has(> #searchform),
+#searchform:has(#logo) {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 22px;
+  width: 100% !important;
+  max-width: var(--top-bar-w) !important;
+  margin: 0 auto !important;
+  padding: 14px 16px !important;
+  box-sizing: border-box !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+/* 4) 搜索胶囊磨砂化(不想要可删除本小节) */
+#tsf .RNNXgb,
+#tsf .SDkEP {
+  background: rgba(255, 255, 255, 0.55) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  backdrop-filter: blur(14px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.8) !important;
+  box-shadow:
+    0 2px 10px rgba(31, 41, 55, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+}
+#tsf .RNNXgb:focus-within {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border-color: rgba(66, 133, 244, 0.8) !important;
+}
+
+/* ========== 2.6 导航选项卡居中 ========== */
+#hdtb,
+#hdtb-ms,
+#hdtbMenus,
+#appbar,
+#appbar * {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+#hdtb {
+  max-width: var(--top-bar-w) !important;
+  margin: 0 auto !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+#hdtb-ms {
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 2px;
+  max-width: var(--top-bar-w) !important;
+  margin: 0 auto !important;
+  padding: 0 8px 6px !important;
+  box-sizing: border-box;
+}
+
+#hdtb-ms > #hdtb-mn,
+#hdtb-ms > #hdtbMenus {
+  position: absolute !important;
+}
+
+#hdtb-tabs {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  margin: 0 !important;
+  padding: 0 !important;
+  float: none !important;
+}
+
+#hdtb-tls {
+  position: static !important;
+  float: none !important;
+  margin: 0 0 0 10px !important;
+  padding: 0 !important;
+}
+
+#hdtb a,
+#hdtb span,
+#hdtb div {
+  background: transparent !important;
+}
+#hdtb .hdtb-tl,
+#hdtb .hdtb-mn-hd,
+#hdtb-tls .hdtb-tl {
+  padding: 8px 14px !important;
+  border-radius: 999px !important;
+  color: #4a5568 !important;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+#hdtb .hdtb-tl:hover,
+#hdtb .hdtb-mn-hd:hover {
+  background: rgba(255, 255, 255, 0.42) !important;
+  color: #16305c !important;
+}
+#hdtb .hdtb-tl-sel,
+#hdtb .hdtb-tl-sel * {
+  color: #16305c !important;
+  font-weight: 600;
+}
+
+/* Tools 下拉: 保留可读磨砂白底 */
+#hdtbMenus .hdtb-mn-c,
+#hdtbMenus div[role="menu"],
+.hdtb-mn-c {
+  background: rgba(255, 255, 255, 0.88) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.7) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 12px 32px rgba(31, 41, 55, 0.18) !important;
+  overflow: hidden;
+}
+.hdtb-mn-c a,
+.hdtb-mn-c div,
+.hdtb-mn-c span {
+  background: transparent !important;
+}
+.hdtb-mn-c a:hover {
+  background: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* ========== 3. 居中基座 ========== */
+#rcnt,
+#main,
+#cnt,
+#search {
+  display: block !important;
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+#center_col {
+  display: block !important;
+  float: none !important;
+  margin: 0 auto !important;
+  max-width: 1280px !important;
+  width: 96% !important;
+}
+
+/* ========== 4. 双列网格 ========== */
+#rso {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: var(--card-gap-y) var(--card-gap-x) !important;
+  width: 100% !important;
+  margin: 40px auto !important;
+  align-items: start !important;
+  padding: 0 !important;
+}
+
+#rso > div:empty {
+  display: none !important;
+}
+
+#rso > div.MjjYud:not(:has(a)):not(:has(h3)):not(:has(img)):not(:has(.related-question-pair)):not(:has(.g-blk)),
+#rso > div.g:not(:has(a)):not(:has(h3)):not(:has(img)):not(:has(.related-question-pair)):not(:has(.g-blk)) {
+  display: none !important;
+}
+
+#rso > div:not(.MjjYud):not(.g):not(:empty),
+#rso > div.MjjYud:has(.related-question-pair),
+#rso > div.MjjYud:has(.g-blk),
+#rso > #brs {
+  grid-column: 1 / -1 !important;
+}
+
+#rhs,
+.kp-wholepage {
+  display: none !important;
+}
+
+/* ========== 5. 清除谷歌原生白底(排除卡片自身) ========== */
+#rso,
+#rso div:not(.MjjYud):not(.g) {
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+#rso div:not(.MjjYud):not(.g) {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+div[style*="background-color: rgb(255, 255, 255)"],
+div[style*="background-color:rgb(255,255,255)"],
+div[style*="background-color: rgba(255, 255, 255)"],
+div[style*="background-color:rgba(255,255,255)"] {
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* ========== 6. 磨砂玻璃卡片核心 ========== */
+#rso > div.MjjYud,
+#rso > div.g {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  padding: 16px 22px !important;
+  position: relative !important;
+
+  background: var(--glass-bg) !important;
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--glass-radius);
+  box-shadow:
+    var(--glass-shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+
+  transform: scale(1);
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    background 0.22s ease,
+    border-color 0.22s ease,
+    -webkit-backdrop-filter 0.22s ease,
+    backdrop-filter 0.22s ease;
+}
+
+div.MjjYud div.g,
+div.MjjYud > div {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+#rso > div.MjjYud:hover,
+#rso > div.g:hover {
+  transform: scale(1.015);
+  background: var(--glass-bg-hover) !important;
+  border-color: var(--glass-border-hv) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+  box-shadow:
+    0 14px 40px rgba(31, 41, 55, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  z-index: 2;
+}
+
+#rso > div.MjjYud,
+#rso > div.g {
+  color: #202124;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+/* ========== 7. ★ 翻页: 原生两行结构,整体居中 ========== */
+#botstuff {
+  display: block !important;
+  width: 100% !important;
+  margin: 8px auto 40px !important;
+  text-align: center !important;
+  background: transparent !important;
+}
+
+#navcnt {
+  display: block !important;
+  margin: 12px auto 0 !important;
+  text-align: center !important;
+  background: transparent !important;
+}
+
+#navcnt table {
+  margin: 0 auto !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+#navcnt tbody,
+#navcnt tr {
+  background-color: transparent !important;
+  border: none !important;
+}
+#navcnt td {
+  background: transparent !important;
+  border: none !important;
+}
+
+#navcnt td a,
+#navcnt td span,
+#navcnt td.cur {
+  color: #1a2b4c !important;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.65);
+  text-decoration: none !important;
+}
+#navcnt td a:hover {
+  color: #16305c !important;
+  text-decoration: underline !important;
+}
+#navcnt td.cur,
+#navcnt td.cur span {
+  color: #16305c !important;
+  font-weight: 700;
+}
+#pnnext,
+#pnprev {
+  margin: 0 !important;
+}
+
+/* ========== 8. ★ 页脚居中(隐私/条款/国家等) ========== */
+#fbar,
+#fbar-container,
+#fbarcnt {
+  display: block !important;
+  width: 100% !important;
+  margin: 0 auto !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+#fbarcnt {
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center !important;
+  gap: 2px 20px;
+  padding: 10px 12px 20px !important;
+  box-sizing: border-box;
+}
+#fbarcnt > * {
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center !important;
+  gap: 2px 20px;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+#fbar a,
+#fbar span,
+#fbar div {
+  background-color: transparent !important;
+  color: #374151 !important;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+}
+#fbar a:hover {
+  color: #16305c !important;
+  text-decoration: underline;
+}
+
+/* ========== 9. 响应式 ========== */
+@media (max-width: 960px) {
+  :root { --top-bar-w: 94%; }
+  #logo img,
+  a#logo img { height: 28px !important; }
+  #rso {
+    grid-template-columns: 1fr !important;
+    width: min(720px, 94%) !important;
+    gap: 24px !important;
+  }
+  #rso > div:not(.MjjYud):not(.g):not(:empty) {
+    grid-column: auto !important;
+  }
+}
+
+/* ========== 10. 降级 ========== */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  #rso > div.MjjYud,
+  #rso > div.g,
+  #tsf .RNNXgb {
+    background: rgba(255, 255, 255, 0.82) !important;
+  }
+}
+
+/* =========================================================
+ * ▼▼▼ v4.1 修复包(追加在 v4 全文之后,不改动上面任何一行) ▼▼▼
+ *  A. logo 与搜索框保证同行 + 搜索框加宽(--search-w)
+ *  B. 导航选项卡整行居中 + 去掉选项卡下方白线
+ *  C. 页脚三行(个性化/地区/Help…)居中
+ * ========================================================= */
+
+:root {
+  --search-w: 860px;   /* ★ 搜索框宽度旋钮 */
+}
+
+/* ---------- A1. logo 与搜索框的公共父层: 无条件居中横排 ----------
+   用 img[src*="googlelogo"] 定位 logo,不依赖 id/类名是否改版 */
+div:has(> #searchform):has(img[src*="googlelogo"]),
+div:has(> form#tsf):has(img[src*="googlelogo"]) {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 22px;
+  width: 100% !important;
+  max-width: calc(var(--search-w) + 200px) !important;
+  margin: 0 auto !important;
+  padding: 14px 16px !important;
+  box-sizing: border-box !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+/* ---------- A2. 四层容器全部横排: logo 嵌套在哪层都同行 ---------- */
+#searchform,
+form#tsf,
+#tsf-c {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  gap: 22px;
+  background: transparent !important;
+  border: none !important;
+}
+#searchform {
+  flex: 0 1 var(--search-w) !important;   /* ★ 覆盖 v4 的 660px */
+  width: 100%;
+  max-width: var(--search-w) !important;
+  min-width: 0;
+  margin: 0 auto !important;
+  padding: 0 !important;
+}
+form#tsf {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+#tsf-c {
+  flex: 1 1 auto !important;
+  min-width: 0;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+#tsf-c .sbfc,
+#tsf .RNNXgb {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+/* ---------- A3. logo 锚点: 解除定位 + 排到行首 + 强制可见 ---------- */
+#logo,
+a#logo,
+#hplogo,
+.pHiopf,
+a:has(> img[src*="googlelogo"]),
+a:has(img[src*="googlelogo"]) {
+  position: static !important;
+  display: inline-flex !important;
+  align-items: center;
+  flex: 0 0 auto !important;
+  order: -1 !important;              /* ★ 无论在哪层都排到搜索框左边 */
+  margin: 0 !important;
+  padding: 0 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  z-index: auto !important;
+}
+#logo img,
+a#logo img,
+#hplogo img,
+a:has(img[src*="googlelogo"]) img,
+img[src*="googlelogo"] {
+  height: 34px !important;
+  width: auto !important;
+  max-width: 140px !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* ---------- B. 选项卡整行居中 + 去白线 ----------
+   只设 justify-content/text-align,不改 display,不影响下拉菜单显隐 */
+#hdtb,
+#hdtb-ms,
+#hdtb-tabs,
+#hdtb-sf,
+#hdtb > div:not(#hdtbMenus),
+#hdtb-ms > div:not(#hdtbMenus),
+#hdtb-ms > div:not(#hdtbMenus) > div {
+  justify-content: center !important;
+  text-align: center !important;
+  float: none !important;
+  border-bottom: none !important;    /* ★ 去掉选项卡下方白线 */
+}
+#hdtb-tabs,
+#hdtb-sf {
+  flex: 0 0 auto !important;         /* ★ 收掉原生 flex:1,不再撑满整行 */
+  width: auto !important;
+  max-width: 100%;
+  margin: 0 auto !important;
+}
+#hdtb-ms {
+  max-width: var(--top-bar-w) !important;
+  margin: 0 auto !important;
+  gap: 2px;
+}
+#hdtb-tls {
+  position: static !important;
+  flex: 0 0 auto !important;
+  margin: 0 0 0 10px !important;
+}
+
+/* ---------- C. 页脚三行居中(覆盖任意嵌套深度) ---------- */
+#fbarcnt,
+#fbarcnt div,
+#fbar-l,
+#fbar-r,
+#fsettl,
+#swml,
+#fsr {
+  justify-content: center !important;
+  text-align: center !important;
+  float: none !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+#fbarcnt div {
+  width: auto;
+  max-width: 100%;
+}
