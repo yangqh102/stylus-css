@@ -1,15 +1,13 @@
 /*
- * Google Search · 磨砂双列主题(完整最终版 v4)
+ * Google Search · 磨砂双列主题(整合版 v6 修复搜索框宽度bug)
  * 适用: https://www.google.com.hk/* 等谷歌搜索页 · Stylus 纯CSS
  * 背景图: https://i.111666.best/image/eEMS04jJ47o6RKA6JkQR9t.jpg
  *
- * v4 修复:
- *  ⑦ logo 与搜索框同一行、整组居中(logo 解除绝对定位 + 公共父层 flex)
- *  ⑧ 翻页恢复原生两行: 第一行 Goooooogle 标志 / 第二行数字…Next 收尾,整体居中
- *  ⑨ 页脚(隐私/条款/国家等)居中
- *
- * 旋钮:
- *  --top-bar-w  : 顶栏与导航条限宽   --card-gap-x/y : 卡片列/行间距
+ * v6修复:
+ *  ✅ 区分【整行容器宽度】和【搜索输入框宽度】
+ *  ✅ --search-input-w 专门控制搜索胶囊本身宽度，真正实现搜索框加宽一倍
+ *  ✅ --search-row-w 控制logo+搜索框这一行整体最大宽度
+ *  ✅ 保留logo在搜索框左侧、居中布局逻辑不变
  */
 
 /* ========== 可调参数 ========== */
@@ -24,7 +22,11 @@
   --glass-radius:    16px;
   --card-gap-x:      32px;
   --card-gap-y:      36px;
-  --top-bar-w:       880px;
+  --top-bar-w:       1080px;
+  --search-row-w:    1320px;  /* logo+搜索框 整行最大宽度 */
+  --search-input-w:  800px;  /* ★ 搜索胶囊本身宽度，这里就是你想要的搜索框宽度，改这个！ */
+  --logo-w:          138px;
+  --logo-h:          46px;
 }
 
 /* ========== 1. 全屏背景 ========== */
@@ -55,75 +57,120 @@ header[role="banner"] * {
   box-shadow: none !important;
 }
 
-/* 原生白色背景条隐藏 */
 .sfbg,
 .sfbgx {
   display: none !important;
 }
 
-/* ========== 2.5 ★ 顶栏: logo + 搜索框 同一行、整组居中 ========== */
-/* 1) logo 解除绝对定位,回到文档流 */
-#logo,
-a#logo,
-#tsf a:has(> img) {
+/* ========== 2.5 ★ 顶栏: logo 固定搜索框左侧 + 搜索框独立宽度控制【修复重点】 ========== */
+/* 分支C: 散落在 #searchform 之外的绝对定位 logo → 隐藏(杜绝压盖) */
+#logo:not(#searchform *),
+a#logo:not(#searchform *),
+.pHiopf:not(#searchform *),
+#hplogo:not(#searchform *) {
+  display: none !important;
+}
+
+/* 公共父层: 居中横排 */
+div:has(> #searchform) {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  margin: 0 auto !important;
+  padding: 16px 16px 10px !important;
+  box-sizing: border-box !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+/* 搜索表单容器: 限宽 = 整行最大宽度，不再用它控制搜索框！ */
+#searchform {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  gap: 18px;
+  flex: 0 1 var(--search-row-w) !important;
+  width: 100%;
+  max-width: min(var(--search-row-w), 94vw) !important;
+  min-width: 0;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  position: relative !important;
+}
+
+/* 分支A: 原生 logo 在 #searchform 内 → 行首 flex 项(保留回家链接) */
+#searchform > #logo,
+#searchform > a#logo,
+#searchform > .pHiopf,
+#searchform > a:has(img[src*="googlelogo"]) {
   position: static !important;
   display: inline-flex !important;
   align-items: center;
+  order: -1 !important;
   flex: 0 0 auto !important;
   margin: 0 !important;
   padding: 0 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
 }
-#logo img,
-a#logo img,
-#tsf a:has(> img) img {
-  height: 34px !important;
+#searchform > #logo img,
+#searchform > a#logo img,
+#searchform > .pHiopf img,
+#searchform > a:has(img[src*="googlelogo"]) img {
+  height: var(--logo-h) !important;
   width: auto !important;
-  max-width: 130px;
+  max-width: var(--logo-w) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 
-/* 2) 搜索表单: 吃掉剩余宽度但设上限 */
-#searchform {
-  margin: 0 !important;
-  flex: 0 1 660px !important;
-  max-width: 660px;
-  min-width: 0;
+/* 分支B: 原生 logo 不在 #searchform 内 → 伪元素绘制在搜索框左侧 */
+#searchform:not(:has(#logo)):not(:has(.pHiopf)):not(:has(a:has(img[src*="googlelogo"])))::before {
+  content: "";
+  flex: 0 0 auto;
+  order: -1;
+  width: var(--logo-w);
+  height: var(--logo-h);
+  background: url("https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92.png")
+              no-repeat center / contain;
+  filter: drop-shadow(0 2px 8px rgba(255, 255, 255, 0.65));
+  pointer-events: none;
 }
+
+/* 表单容器：不再强行撑满，让搜索胶囊自己控制宽度 */
 form#tsf {
   display: flex !important;
-  width: 100% !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  flex: 0 1 auto !important;
+  min-width: 0;
   margin: 0 !important;
   padding: 0 !important;
   background: transparent !important;
   border: none !important;
 }
 #tsf-c {
-  width: 100% !important;
+  flex: 0 1 auto !important;
+  min-width: 0;
   margin: 0 !important;
   padding: 0 !important;
 }
-
-/* 3) logo 与搜索框的公共父层 → 居中横排(多版本兜底) */
-:is(body, div):has(> #logo):has(> #searchform),
-:is(body, div):has(> a#logo):has(> #searchform),
-:is(body, div):has(> * > #logo):has(> #searchform),
-#searchform:has(#logo) {
-  display: flex !important;
-  flex-wrap: nowrap !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 22px;
-  width: 100% !important;
-  max-width: var(--top-bar-w) !important;
-  margin: 0 auto !important;
-  padding: 14px 16px !important;
-  box-sizing: border-box !important;
-  background: transparent !important;
-  border: none !important;
+/* ========== 核心修复：搜索胶囊RNNXgb绑定 --search-input-w ========== */
+#tsf-c .sbfc,
+#tsf .RNNXgb {
+  width: var(--search-input-w) !important;
+  max-width: var(--search-input-w) !important;
 }
 
-/* 4) 搜索胶囊磨砂化(不想要可删除本小节) */
+/* 搜索胶囊磨砂化 */
 #tsf .RNNXgb,
 #tsf .SDkEP {
+  height: 48px;
+  border-radius: 24px;
   background: rgba(255, 255, 255, 0.55) !important;
   -webkit-backdrop-filter: blur(14px) saturate(160%);
   backdrop-filter: blur(14px) saturate(160%);
@@ -136,104 +183,139 @@ form#tsf {
   background: rgba(255, 255, 255, 0.85) !important;
   border-color: rgba(66, 133, 244, 0.8) !important;
 }
+#tsf input[name="q"],
+#tsf .gsfi {
+  height: 46px !important;
+  font-size: 16px !important;
+}
 
-/* ========== 2.6 导航选项卡居中 ========== */
-#hdtb,
-#hdtb-ms,
-#hdtbMenus,
-#appbar,
-#appbar * {
+/* ========== 2.6 ★ 导航选项卡: 按真实 DOM 居中 ========== */
+.Fgyi2e,
+.YNk70c,
+.GG4mbd,
+.Xk7zJc,
+.Lkwdxd,
+.HTOhZ,
+.EDblX,
+.h5JSWd,
+.rQTE8b {
   background: transparent !important;
   background-color: transparent !important;
   border: none !important;
   box-shadow: none !important;
-}
-
-#hdtb {
+  width: 100% !important;
   max-width: var(--top-bar-w) !important;
   margin: 0 auto !important;
   padding-left: 0 !important;
   padding-right: 0 !important;
+  overflow: visible !important;   /* 解除横向滚动容器,才能居中 */
 }
 
-#hdtb-ms {
+/* 白线/分隔条移除 */
+.PwiNU,
+.w4RcGe,
+.pQXcHc {
+  display: none !important;       /* 白线 + 左右滚动箭头 */
+}
+
+/* 行容器: 列表 + Tools 一组居中 */
+.h5JSWd {
   display: flex !important;
   flex-wrap: wrap;
-  align-items: center !important;
+  align-items: center;
   justify-content: center !important;
-  gap: 2px;
-  max-width: var(--top-bar-w) !important;
-  margin: 0 auto !important;
-  padding: 0 8px 6px !important;
+  gap: 2px 8px;
+  padding: 0 8px 8px !important;
   box-sizing: border-box;
 }
 
-#hdtb-ms > #hdtb-mn,
-#hdtb-ms > #hdtbMenus {
-  position: absolute !important;
-}
-
-#hdtb-tabs {
+/* 选项列表: wrap 居中 */
+.beZ0tf {
   display: flex !important;
+  flex-wrap: wrap !important;
   align-items: center;
-  justify-content: center;
+  justify-content: center !important;
   gap: 2px;
   margin: 0 !important;
   padding: 0 !important;
-  float: none !important;
-}
-
-#hdtb-tls {
-  position: static !important;
-  float: none !important;
-  margin: 0 0 0 10px !important;
-  padding: 0 !important;
-}
-
-#hdtb a,
-#hdtb span,
-#hdtb div {
   background: transparent !important;
 }
-#hdtb .hdtb-tl,
-#hdtb .hdtb-mn-hd,
-#hdtb-tls .hdtb-tl {
+.beZ0tf > div,
+.beZ0tf > a {
+  flex: 0 0 auto;
+}
+
+/* Tools 容器: 跟在列表后 */
+.yeKjxb {
+  flex: 0 0 auto !important;
+  margin: 0 0 0 6px !important;
+  background: transparent !important;
+}
+
+/* 选项药丸样式 */
+.beZ0tf .mXwfNd,
+.yeKjxb .mXwfNd,
+.beZ0tf .mTpL7c .mXwfNd {
   padding: 8px 14px !important;
   border-radius: 999px !important;
+  background: transparent !important;
   color: #4a5568 !important;
   text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+  cursor: pointer;
   transition: background 0.2s ease, color 0.2s ease;
 }
-#hdtb .hdtb-tl:hover,
-#hdtb .hdtb-mn-hd:hover {
+.beZ0tf a:hover .mXwfNd,
+.beZ0tf .mTpL7c:hover .mXwfNd,
+.yeKjxb .mOKdDc:hover .mXwfNd {
   background: rgba(255, 255, 255, 0.42) !important;
   color: #16305c !important;
 }
-#hdtb .hdtb-tl-sel,
-#hdtb .hdtb-tl-sel * {
+/* 选中项 */
+.beZ0tf .mXwfNd[selected],
+.beZ0tf .mXwfNd[aria-current="page"],
+.beZ0tf [aria-current="page"] .mXwfNd {
   color: #16305c !important;
   font-weight: 600;
 }
 
-/* Tools 下拉: 保留可读磨砂白底 */
+/* More / Tools 下拉面板: 可读白底 */
+.vH6rvf,
+.vH6rvf .sjVJQd,
 #hdtbMenus .hdtb-mn-c,
-#hdtbMenus div[role="menu"],
 .hdtb-mn-c {
-  background: rgba(255, 255, 255, 0.88) !important;
-  -webkit-backdrop-filter: blur(18px) saturate(160%);
-  backdrop-filter: blur(18px) saturate(160%);
+  background: rgba(255, 255, 255, 0.92) !important;
   border: 1px solid rgba(255, 255, 255, 0.7) !important;
   border-radius: 12px !important;
   box-shadow: 0 12px 32px rgba(31, 41, 55, 0.18) !important;
-  overflow: hidden;
 }
-.hdtb-mn-c a,
-.hdtb-mn-c div,
-.hdtb-mn-c span {
+.vH6rvf a,
+.vH6rvf .mXwfNd,
+.hdtb-mn-c a {
   background: transparent !important;
 }
-.hdtb-mn-c a:hover {
+.vH6rvf a:hover .mXwfNd {
   background: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* 旧版 #hdtb 结构兜底(改版回退时仍居中) */
+#hdtb,
+#hdtb-ms,
+#hdtb-tabs,
+#hdtb-sf {
+  justify-content: center !important;
+  text-align: center !important;
+  border-bottom: none !important;
+  background: transparent !important;
+}
+#hdtb-tabs,
+#hdtb-sf {
+  flex: 0 0 auto !important;
+  margin: 0 auto !important;
+}
+#hdtb-tls {
+  position: static !important;
+  flex: 0 0 auto !important;
+  margin: 0 0 0 10px !important;
 }
 
 /* ========== 3. 居中基座 ========== */
@@ -368,7 +450,7 @@ div.MjjYud > div {
   text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
 }
 
-/* ========== 7. ★ 翻页: 原生两行结构,整体居中 ========== */
+/* ========== 7. 翻页: 原生两行结构,整体居中 ========== */
 #botstuff {
   display: block !important;
   width: 100% !important;
@@ -452,6 +534,24 @@ div.MjjYud > div {
   padding: 0 !important;
 }
 
+#fbarcnt,
+#fbarcnt div,
+#fbar-l,
+#fbar-r,
+#fsettl,
+#swml,
+#fsr {
+  justify-content: center !important;
+  text-align: center !important;
+  float: none !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+#fbarcnt div {
+  width: auto;
+  max-width: 100%;
+}
+
 #fbar a,
 #fbar span,
 #fbar div {
@@ -464,11 +564,17 @@ div.MjjYud > div {
   text-decoration: underline;
 }
 
+
 /* ========== 9. 响应式 ========== */
 @media (max-width: 960px) {
-  :root { --top-bar-w: 94%; }
-  #logo img,
-  a#logo img { height: 28px !important; }
+  :root {
+    --top-bar-w: 94%;
+    --search-row-w: 94vw;
+    --search-input-w: 94vw; /* 移动端搜索框直接撑满可用宽度 */
+    --logo-w: 104px;
+    --logo-h: 36px;
+  }
+  #searchform { gap: 12px; }
   #rso {
     grid-template-columns: 1fr !important;
     width: min(720px, 94%) !important;
@@ -486,151 +592,4 @@ div.MjjYud > div {
   #tsf .RNNXgb {
     background: rgba(255, 255, 255, 0.82) !important;
   }
-}
-
-/* =========================================================
- * ▼▼▼ v4.1 修复包(追加在 v4 全文之后,不改动上面任何一行) ▼▼▼
- *  A. logo 与搜索框保证同行 + 搜索框加宽(--search-w)
- *  B. 导航选项卡整行居中 + 去掉选项卡下方白线
- *  C. 页脚三行(个性化/地区/Help…)居中
- * ========================================================= */
-
-:root {
-  --search-w: 860px;   /* ★ 搜索框宽度旋钮 */
-}
-
-/* ---------- A1. logo 与搜索框的公共父层: 无条件居中横排 ----------
-   用 img[src*="googlelogo"] 定位 logo,不依赖 id/类名是否改版 */
-div:has(> #searchform):has(img[src*="googlelogo"]),
-div:has(> form#tsf):has(img[src*="googlelogo"]) {
-  display: flex !important;
-  flex-wrap: nowrap !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 22px;
-  width: 100% !important;
-  max-width: calc(var(--search-w) + 200px) !important;
-  margin: 0 auto !important;
-  padding: 14px 16px !important;
-  box-sizing: border-box !important;
-  background: transparent !important;
-  border: none !important;
-}
-
-/* ---------- A2. 四层容器全部横排: logo 嵌套在哪层都同行 ---------- */
-#searchform,
-form#tsf,
-#tsf-c {
-  display: flex !important;
-  flex-wrap: nowrap !important;
-  align-items: center !important;
-  gap: 22px;
-  background: transparent !important;
-  border: none !important;
-}
-#searchform {
-  flex: 0 1 var(--search-w) !important;   /* ★ 覆盖 v4 的 660px */
-  width: 100%;
-  max-width: var(--search-w) !important;
-  min-width: 0;
-  margin: 0 auto !important;
-  padding: 0 !important;
-}
-form#tsf {
-  width: 100% !important;
-  margin: 0 !important;
-  padding: 0 !important;
-}
-#tsf-c {
-  flex: 1 1 auto !important;
-  min-width: 0;
-  width: 100% !important;
-  margin: 0 !important;
-  padding: 0 !important;
-}
-#tsf-c .sbfc,
-#tsf .RNNXgb {
-  width: 100% !important;
-  max-width: none !important;
-}
-
-/* ---------- A3. logo 锚点: 解除定位 + 排到行首 + 强制可见 ---------- */
-#logo,
-a#logo,
-#hplogo,
-.pHiopf,
-a:has(> img[src*="googlelogo"]),
-a:has(img[src*="googlelogo"]) {
-  position: static !important;
-  display: inline-flex !important;
-  align-items: center;
-  flex: 0 0 auto !important;
-  order: -1 !important;              /* ★ 无论在哪层都排到搜索框左边 */
-  margin: 0 !important;
-  padding: 0 !important;
-  opacity: 1 !important;
-  visibility: visible !important;
-  z-index: auto !important;
-}
-#logo img,
-a#logo img,
-#hplogo img,
-a:has(img[src*="googlelogo"]) img,
-img[src*="googlelogo"] {
-  height: 34px !important;
-  width: auto !important;
-  max-width: 140px !important;
-  opacity: 1 !important;
-  visibility: visible !important;
-}
-
-/* ---------- B. 选项卡整行居中 + 去白线 ----------
-   只设 justify-content/text-align,不改 display,不影响下拉菜单显隐 */
-#hdtb,
-#hdtb-ms,
-#hdtb-tabs,
-#hdtb-sf,
-#hdtb > div:not(#hdtbMenus),
-#hdtb-ms > div:not(#hdtbMenus),
-#hdtb-ms > div:not(#hdtbMenus) > div {
-  justify-content: center !important;
-  text-align: center !important;
-  float: none !important;
-  border-bottom: none !important;    /* ★ 去掉选项卡下方白线 */
-}
-#hdtb-tabs,
-#hdtb-sf {
-  flex: 0 0 auto !important;         /* ★ 收掉原生 flex:1,不再撑满整行 */
-  width: auto !important;
-  max-width: 100%;
-  margin: 0 auto !important;
-}
-#hdtb-ms {
-  max-width: var(--top-bar-w) !important;
-  margin: 0 auto !important;
-  gap: 2px;
-}
-#hdtb-tls {
-  position: static !important;
-  flex: 0 0 auto !important;
-  margin: 0 0 0 10px !important;
-}
-
-/* ---------- C. 页脚三行居中(覆盖任意嵌套深度) ---------- */
-#fbarcnt,
-#fbarcnt div,
-#fbar-l,
-#fbar-r,
-#fsettl,
-#swml,
-#fsr {
-  justify-content: center !important;
-  text-align: center !important;
-  float: none !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-}
-#fbarcnt div {
-  width: auto;
-  max-width: 100%;
 }
