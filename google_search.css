@@ -23,8 +23,8 @@
   --card-gap-x:      32px;
   --card-gap-y:      36px;
   --top-bar-w:       1080px;
-  --search-row-w:    1320px;  /* logo+搜索框 整行最大宽度 */
-  --search-input-w:  800px;  /* ★ 搜索胶囊本身宽度，这里就是你想要的搜索框宽度，改这个！ */
+  --search-row-w:    800px;  /* logo+搜索框 整行最大宽度 */
+  --search-input-w:  600px;  /* ★ 搜索胶囊本身宽度，这里就是你想要的搜索框宽度，改这个！ */
   --logo-w:          138px;
   --logo-h:          46px;
 }
