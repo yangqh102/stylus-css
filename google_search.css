@@ -593,3 +593,176 @@ div.MjjYud > div {
     background: rgba(255, 255, 255, 0.82) !important;
   }
 }
+
+/* =========================================================
+ * ▼▼▼ v6.3 菜单栏重做(替换整个 v6.2 段) ▼▼▼
+ * ========================================================= */
+
+/* ---------- 1. 粘性顶带全透明(全宽白带的根源) ---------- */
+.minidiv,
+#hdtb-sf,
+#hdtb-sf > div,
+#hdtb,
+#hdtb-ms,
+.Fgyi2e,
+.Fgyi2e > div,
+.YNk70c,
+.GG4mbd,
+.Xk7zJc,
+.Lkwdxd,
+.HTOhZ,
+.EDblX,
+.rQTE8b {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+/* 导航子树统一清边线/阴影(含内联 style);背景交给下面逐层处理 */
+.Fgyi2e *,
+#hdtb-sf *,
+#hdtb * {
+  border-top: none !important;
+  border-bottom: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+/* 子树背景透明(下拉面板在后面补回,同特异性后写者胜) */
+.Fgyi2e * {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* 1–2px 细条 + 原生选中下划线 */
+.Fgyi2e div[style*="height: 1px"],
+.Fgyi2e div[style*="height:1px"],
+.Fgyi2e div[style*="height: 2px"],
+.Fgyi2e span[style*="height: 1px"],
+.beZ0tf .mXwfNd::after,
+.beZ0tf [aria-current="page"]::after,
+.beZ0tf [selected]::after {
+  display: none !important;
+}
+
+/* ---------- 2. 居中渐变磨砂胶囊工具条 ---------- */
+.h5JSWd {
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center !important;
+  gap: 2px 4px;
+
+  width: fit-content !important;
+  max-width: min(94vw, 900px);
+  margin: 14px auto 26px !important;
+  padding: 5px 8px !important;
+  box-sizing: border-box;
+
+  background: linear-gradient(180deg,
+              rgba(255, 255, 255, 0.52),
+              rgba(255, 255, 255, 0.30)) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(165%);
+  backdrop-filter: blur(16px) saturate(165%);
+  border: 1px solid rgba(255, 255, 255, 0.72) !important;
+  border-radius: 999px !important;
+  box-shadow:
+    0 6px 22px rgba(31, 41, 55, 0.14),
+    0 0 0 4px rgba(255, 255, 255, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65) !important;
+}
+
+/* 内层收缩为内容宽 */
+.rQTE8b,
+.beZ0tf,
+.yeKjxb {
+  width: auto !important;
+  max-width: none !important;
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+  background: transparent !important;
+}
+.beZ0tf {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center;
+  justify-content: center !important;
+  gap: 2px;
+  padding: 0 !important;
+}
+
+/* Tools 与列表之间的细分隔线(只动 left,不受灭线影响) */
+.yeKjxb {
+  margin: 0 0 0 8px !important;
+  padding-left: 10px !important;
+  border-left: 1px solid rgba(120, 140, 170, 0.28) !important;
+}
+
+/* ---------- 3. 选项药丸 ---------- */
+.beZ0tf .mXwfNd,
+.yeKjxb .mXwfNd,
+.beZ0tf .mTpL7c .mXwfNd {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 4px;
+  padding: 7px 15px !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  color: #3c4a63 !important;
+  font-size: 13.5px !important;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.65);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+.beZ0tf a:hover .mXwfNd,
+.beZ0tf .mTpL7c:hover .mXwfNd,
+.yeKjxb .mOKdDc:hover .mXwfNd {
+  background: rgba(255, 255, 255, 0.55) !important;
+  color: #16305c !important;
+}
+/* 选中: 白药丸 + 蓝字 + 细环,层次更清楚 */
+.beZ0tf .mXwfNd[selected],
+.beZ0tf .mXwfNd[aria-current="page"],
+.beZ0tf [aria-current="page"] .mXwfNd {
+  background: linear-gradient(180deg, #ffffff, rgba(255, 255, 255, 0.86)) !important;
+  color: #1a56c4 !important;
+  font-weight: 600;
+  text-shadow: none;
+  box-shadow:
+    0 2px 10px rgba(26, 86, 196, 0.18),
+    0 0 0 1px rgba(26, 86, 196, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+}
+
+/* 下拉小箭头配色 */
+.beZ0tf svg,
+.yeKjxb svg {
+  fill: #5f6b7f !important;
+  opacity: 0.85;
+}
+
+/* ---------- 4. 下拉面板补回(写在灭线之后) ---------- */
+.vH6rvf,
+.vH6rvf .sjVJQd,
+#hdtbMenus .hdtb-mn-c,
+.hdtb-mn-c,
+#hdtb-sf .hdtb-mn-c {
+  background: rgba(255, 255, 255, 0.94) !important;
+  border: 1px solid rgba(255, 255, 255, 0.8) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 14px 40px rgba(31, 41, 55, 0.20) !important;
+  overflow: hidden;
+}
+.vH6rvf a,
+.vH6rvf .mXwfNd,
+.hdtb-mn-c a {
+  background: transparent !important;
+}
+.vH6rvf a:hover .mXwfNd,
+.hdtb-mn-c a:hover {
+  background: rgba(66, 133, 244, 0.10) !important;
+}
